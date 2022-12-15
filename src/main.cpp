@@ -1,11 +1,12 @@
 #include <Arduino.h>
 
 const int LEDBuiltIn = PC13;
-const int potPin = PA2;
+const int potPin = PA3;
 const int LEDEksternalPin = PA1;
 const int key = PA0;
 float ledFade = 0;
 unsigned long lastFadeTime;
+unsigned long lastPrintTime = 0;
 const long fadeTime = 20;
 float dimSpeed = 10;
 int buttonState;
@@ -60,9 +61,14 @@ void loop()
 
   potValue = analogRead(potPin);
   vPot = (double)(potValue / 1023.00) * 5.00;
-  Serial.print("Tegangan Analog: ");
-  Serial.print(vPot, 2);
-  Serial.println(" volt");
+  if (millis() - lastPrintTime > 5000)
+  {
+    Serial.print("Tegangan Analog: ");
+    Serial.print(vPot, 2);
+    Serial.println(" volt");
+    lastPrintTime = millis();
+  }
+
   analogWrite(LEDEksternalPin, ledFade);
   if (vPot < 2)
     digitalWrite(LEDBuiltIn, HIGH);
